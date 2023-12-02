@@ -1,30 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Board } from './entities/board.entity';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class BoardsService {
-  async create(createBoardDto: CreateBoardDto) {
-    const board = new Board();
-    board.id = 1;
-    board.name = createBoardDto.name;
+  constructor(private prisma: PrismaService) {}
+
+  async create(createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.prisma.board.create({
+      data: createBoardDto,
+    });
+  }
+
+  async findAll(): Promise<Board[]> {
+    return this.prisma.board.findMany();
+  }
+
+  async findOne(id: number): Promise<Board> {
+    const board = await this.prisma.board.findUnique({
+      where: { id },
+    });
+
+    if (!board) {
+      throw new NotFoundException(`Board with ID ${id} not found`);
+    }
+
     return board;
   }
 
-  findAll() {
-    return `This action returns all boards`;
+  async update(id: number, updateBoardDto: UpdateBoardDto): Promise<Board> {
+    const existingBoard = await this.prisma.board.findUnique({
+      where: { id },
+    });
+
+    if (!existingBoard) {
+      throw new NotFoundException(`Board with ID ${id} not found`);
+    }
+
+    return this.prisma.board.update({
+      where: { id },
+      data: updateBoardDto,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
-  }
+  async remove(id: number): Promise<Board> {
+    const existingBoard = await this.prisma.board.findUnique({
+      where: { id },
+    });
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
-  }
+    if (!existingBoard) {
+      throw new NotFoundException(`Board with ID ${id} not found`);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+    await this.prisma.board.delete({
+      where: { id },
+    });
+
+    return existingBoard;
   }
 }
