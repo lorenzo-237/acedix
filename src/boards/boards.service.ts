@@ -9,21 +9,21 @@ export class BoardsService {
   constructor(private prisma: PrismaService) {}
 
   async create(
-    versionId: number,
+    version_id: number,
     createBoardDto: CreateBoardDto,
   ): Promise<Board> {
     return this.prisma.board.create({
       data: {
-        versionId,
+        version_id,
         ...createBoardDto,
       },
     });
   }
 
-  async findAll(versionId: number): Promise<Board[]> {
+  async findAll(version_id: number): Promise<Board[]> {
     return this.prisma.board.findMany({
       where: {
-        versionId,
+        version_id,
       },
     });
   }

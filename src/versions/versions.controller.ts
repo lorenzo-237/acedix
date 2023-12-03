@@ -37,15 +37,15 @@ export class VersionsController {
   }
 
   @Get(':version_id/boards')
-  findAllBoards(@Param('version_id') versionId: string) {
-    return this.boardsService.findAll(+versionId);
+  findAllBoards(@Param('version_id') version_id: string) {
+    return this.boardsService.findAll(+version_id);
   }
 
   @Post(':version_id/boards')
   createNewBoard(
-    @Param('version_id') versionId: string,
+    @Param('version_id') version_id: string,
     @Body() dto: CreateBoardDto,
   ) {
-    return this.boardsService.create(+versionId, dto);
+    return this.boardsService.create(+version_id, dto);
   }
 }
