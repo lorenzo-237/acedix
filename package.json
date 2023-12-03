@@ -30,7 +30,8 @@
     "class-validator": "^0.14.0",
     "nestjs-prisma": "^0.22.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-themes": "^1.2.30"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

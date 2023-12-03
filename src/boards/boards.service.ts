@@ -14,8 +14,12 @@ export class BoardsService {
     });
   }
 
-  async findAll(): Promise<Board[]> {
-    return this.prisma.board.findMany();
+  async findAll(versionId: number): Promise<Board[]> {
+    return this.prisma.board.findMany({
+      where: {
+        versionId,
+      },
+    });
   }
 
   async findOne(id: number): Promise<Board> {
