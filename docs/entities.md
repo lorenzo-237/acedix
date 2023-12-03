@@ -8,6 +8,7 @@ class List {
   id: string;
   title: string;
   board_id: string;
+  board?: Board;
 }
 
 class Card {
