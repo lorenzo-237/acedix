@@ -6,10 +6,16 @@ import { mockBoards } from './boards.mock';
 export class BoardsServiceMock {
   create = jest
     .fn()
-    .mockImplementation((dto: CreateBoardDto) =>
-      Promise.resolve<Board>({ id: Date.now(), ...dto }),
+    .mockImplementation((versionId: number, dto: CreateBoardDto) =>
+      Promise.resolve<Board>({ id: Date.now(), versionId, ...dto }),
     );
-  findAll = jest.fn().mockResolvedValue(mockBoards);
+  findAll = jest
+    .fn()
+    .mockImplementation((versionId: number) =>
+      Promise.resolve(
+        mockBoards.find((board) => board.versionId === versionId),
+      ),
+    );
   findOne = jest
     .fn()
     .mockImplementation((id: string) =>
