@@ -1,4 +1,12 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Post,
+} from '@nestjs/common';
 import { VersionsService } from './versions.service';
 import { UpdateVersionDto } from './dto/update-version.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -33,7 +41,7 @@ export class VersionsController {
     return this.boardsService.findAll(+versionId);
   }
 
-  @Get(':version_id/boards')
+  @Post(':version_id/boards')
   createNewBoard(
     @Param('version_id') versionId: string,
     @Body() dto: CreateBoardDto,
