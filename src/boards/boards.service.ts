@@ -8,9 +8,15 @@ import { PrismaService } from 'nestjs-prisma';
 export class BoardsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createBoardDto: CreateBoardDto): Promise<Board> {
+  async create(
+    versionId: number,
+    createBoardDto: CreateBoardDto,
+  ): Promise<Board> {
     return this.prisma.board.create({
-      data: createBoardDto,
+      data: {
+        versionId,
+        ...createBoardDto,
+      },
     });
   }
 

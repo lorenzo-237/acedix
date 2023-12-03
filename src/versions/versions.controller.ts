@@ -3,6 +3,7 @@ import { VersionsService } from './versions.service';
 import { UpdateVersionDto } from './dto/update-version.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { BoardsService } from 'src/boards/boards.service';
+import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
 
 @ApiTags('versions')
 @Controller('versions')
@@ -30,5 +31,13 @@ export class VersionsController {
   @Get(':version_id/boards')
   findAllBoards(@Param('version_id') versionId: string) {
     return this.boardsService.findAll(+versionId);
+  }
+
+  @Get(':version_id/boards')
+  createNewBoard(
+    @Param('version_id') versionId: string,
+    @Body() dto: CreateBoardDto,
+  ) {
+    return this.boardsService.create(+versionId, dto);
   }
 }
