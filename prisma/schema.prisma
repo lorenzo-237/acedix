@@ -11,12 +11,11 @@ datasource db {
 }
 
 model Board {
-  id        Int      @id @default(autoincrement())
-  name      String
-  // ... Autres champs et relations
-  List      List[]
-  Version   Version? @relation(fields: [versionId], references: [id])
-  versionId Int?
+  id         Int      @id @default(autoincrement())
+  name       String
+  lists      List[]
+  version    Version? @relation(fields: [version_id], references: [id])
+  version_id Int?
 
   @@map("boards")
 }
@@ -26,8 +25,7 @@ model List {
   title    String
   board_id Int
   board    Board  @relation(fields: [board_id], references: [id])
-  // ... Autres champs et relations
-  Card     Card[]
+  cards    Card[]
 
   @@map("lists")
 }
@@ -38,8 +36,7 @@ model Card {
   description String
   list_id     Int
   list        List   @relation(fields: [list_id], references: [id])
-  position    Int // Si vous utilisez une position pour maintenir l'ordre.
-  // ... Autres champs et relations
+  position    Int
 
   @@map("cards")
 }
@@ -48,8 +45,7 @@ model User {
   id       Int    @id @default(autoincrement())
   username String
   email    String
-  password String // Assurez-vous d'utiliser des mécanismes appropriés pour stocker les mots de passe (hachage, etc.).
-  // ... Autres champs et relations
+  password String
 
   @@map("users")
 }
@@ -59,7 +55,6 @@ model Project {
   name        String
   description String
   versions    Version[]
-  // ... Autres champs et relations
 
   @@map("projects")
 }
@@ -70,8 +65,7 @@ model Version {
   description String
   project_id  Int
   project     Project @relation(fields: [project_id], references: [id])
-  boards      Board[] // Relation avec les tableaux dans une version spécifique
-  // ... Autres champs et relations
+  boards      Board[]
 
   @@map("versions")
 }
