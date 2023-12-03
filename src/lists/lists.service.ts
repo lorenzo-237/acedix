@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import { List } from './entities/list.entity'; // Assurez-vous d'importer le modèle List
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListsService {
-  create(createListDto: CreateListDto) {
-    return 'This action adds a new list';
+  constructor(private prisma: PrismaService) {}
+
+  async create(board_id: number, dto: CreateListDto): Promise<List> {
+    return this.prisma.list.create({
+      data: {
+        board_id,
+        ...dto,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all lists`;
+  async findAll(board_id: number): Promise<List[]> {
+    return this.prisma.list.findMany({
+      where: {
+        board_id,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} list`;
+  async findOne(id: number): Promise<List> {
+    const list = await this.prisma.list.findUnique({
+      where: { id },
+    });
+
+    if (!list) {
+      throw new NotFoundException(`List with ID ${id} not found`);
+    }
+
+    return list;
   }
 
-  update(id: number, updateListDto: UpdateListDto) {
-    return `This action updates a #${id} list`;
+  async update(id: number, dto: UpdateListDto): Promise<List> {
+    const existingList = await this.prisma.list.findUnique({
+      where: { id },
+    });
+
+    if (!existingList) {
+      throw new NotFoundException(`List with ID ${id} not found`);
+    }
+
+    return this.prisma.list.update({
+      where: { id },
+      data: dto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} list`;
+  async remove(id: number): Promise<List> {
+    const existingList = await this.prisma.list.findUnique({
+      where: { id },
+    });
+
+    if (!existingList) {
+      throw new NotFoundException(`List with ID ${id} not found`);
+    }
+
+    await this.prisma.list.delete({
+      where: { id },
+    });
+
+    return existingList;
   }
 }
