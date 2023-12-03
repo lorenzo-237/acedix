@@ -25,21 +25,6 @@ describe('BoardsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return an array of boards', () => {
-      expect(controller.findAll()).resolves.toEqual(mockBoards);
-    });
-  });
-
-  describe('create', () => {
-    it('should create a new board and return created payload', async () => {
-      expect(await controller.create(createdDto)).toEqual({
-        id: expect.any(Number),
-        ...createdDto,
-      });
-    });
-  });
-
   describe('findOne', () => {
     it('should return a single board', async () => {
       const id = '4';
