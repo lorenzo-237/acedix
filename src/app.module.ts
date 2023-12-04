@@ -5,6 +5,8 @@ import { ListsModule } from './lists/lists.module';
 import { PrismaModule } from 'nestjs-prisma';
 import { ProjectsModule } from './projects/projects.module';
 import { VersionsModule } from './versions/versions.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { VersionsModule } from './versions/versions.module';
     ListsModule,
     ProjectsModule,
     VersionsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
