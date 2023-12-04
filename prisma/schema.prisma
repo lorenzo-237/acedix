@@ -10,62 +10,109 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Board {
-  id         Int      @id @default(autoincrement())
-  name       String
-  lists      List[]
-  version    Version? @relation(fields: [version_id], references: [id])
-  version_id Int?
-
-  @@map("boards")
-}
-
-model List {
-  id       Int    @id @default(autoincrement())
-  title    String
-  board_id Int
-  board    Board  @relation(fields: [board_id], references: [id])
-  cards    Card[]
-
-  @@map("lists")
-}
-
-model Card {
-  id          Int    @id @default(autoincrement())
-  title       String
-  description String
-  list_id     Int
-  list        List   @relation(fields: [list_id], references: [id])
-  position    Int
-
-  @@map("cards")
-}
-
-model User {
-  id       Int    @id @default(autoincrement())
-  username String
-  email    String
-  password String
-
-  @@map("users")
-}
-
 model Project {
   id          Int       @id @default(autoincrement())
   name        String
   description String
   versions    Version[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdBy   User      @relation("projectCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?     @relation("projectUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
 
   @@map("projects")
 }
 
 model Version {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   number      String
   description String
   project_id  Int
-  project     Project @relation(fields: [project_id], references: [id])
+  project     Project  @relation(fields: [project_id], references: [id])
   boards      Board[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("versionCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("versionUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
 
   @@map("versions")
+}
+
+model Board {
+  id          Int      @id @default(autoincrement())
+  name        String
+  lists       List[]
+  version     Version? @relation(fields: [version_id], references: [id])
+  version_id  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("boardCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("boardUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
+
+  @@map("boards")
+}
+
+model List {
+  id          Int      @id @default(autoincrement())
+  title       String
+  board_id    Int
+  board       Board    @relation(fields: [board_id], references: [id])
+  cards       Card[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("listCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("listUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
+
+  @@map("lists")
+}
+
+model Card {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  list_id     Int
+  list        List     @relation(fields: [list_id], references: [id])
+  position    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("cardCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("cardUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
+
+  @@map("cards")
+}
+
+enum Role {
+  USER
+  MAINTAINER
+  ADMIN
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique()
+  email            String    @unique()
+  password         String
+  role             Role      @default(USER)
+  created_projects Project[] @relation("projectCreatedBy")
+  updated_projects Project[] @relation("projectUpdatedBy")
+  created_versions Version[] @relation("versionCreatedBy")
+  updated_versions Version[] @relation("versionUpdatedBy")
+  created_boards   Board[]   @relation("boardCreatedBy")
+  updated_boards   Board[]   @relation("boardUpdatedBy")
+  created_lists    List[]    @relation("listCreatedBy")
+  updated_lists    List[]    @relation("listUpdatedBy")
+  created_cards    Card[]    @relation("cardCreatedBy")
+  updated_cards    Card[]    @relation("cardUpdatedBy")
+
+  @@map("users")
 }
