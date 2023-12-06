@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
 
 @Injectable()
-export class AuthenticatedGuard implements CanActivate {
+export class SessionAuthGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<any> {

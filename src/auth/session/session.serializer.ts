@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-import { User } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 import { UserSession } from './user-session.entity';
 
@@ -10,24 +9,16 @@ export class SessionSerializer extends PassportSerializer {
     super();
   }
 
-  serializeUser(user: User, done: (err, user: UserSession) => void) {
-    const userSession: UserSession = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      username: user.role,
-    };
-
-    done(null, userSession);
+  serializeUser(user: UserSession, done: (err, user: UserSession) => void) {
+    done(null, user);
   }
 
   async deserializeUser(
     userSession: UserSession,
     done: (err, user: UserSession) => void,
   ) {
-    const userDB = await this.userService.findOneByUsername(
-      userSession.username,
-    );
+    console.log('here');
+    const userDB = await this.userService.findOneById(userSession.id);
     if (!userDB) {
       return done(null, null);
     }
