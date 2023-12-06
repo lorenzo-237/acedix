@@ -8,9 +8,16 @@ import { PrismaService } from 'nestjs-prisma';
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProjectDto: CreateProjectDto): Promise<Project> {
+  async create(
+    user_id: number,
+    createProjectDto: CreateProjectDto,
+  ): Promise<Project> {
     return this.prisma.project.create({
-      data: createProjectDto,
+      data: {
+        createdById: user_id,
+        updatedById: user_id,
+        ...createProjectDto,
+      },
     });
   }
 
@@ -31,6 +38,7 @@ export class ProjectsService {
   }
 
   async update(
+    user_id: number,
     id: number,
     updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
@@ -44,7 +52,7 @@ export class ProjectsService {
 
     return this.prisma.project.update({
       where: { id },
-      data: updateProjectDto,
+      data: { updatedById: user_id, ...updateProjectDto },
     });
   }
 

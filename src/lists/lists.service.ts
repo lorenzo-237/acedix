@@ -8,10 +8,16 @@ import { PrismaService } from 'nestjs-prisma';
 export class ListsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(board_id: number, dto: CreateListDto): Promise<List> {
+  async create(
+    user_id: number,
+    board_id: number,
+    dto: CreateListDto,
+  ): Promise<List> {
     return this.prisma.list.create({
       data: {
         board_id,
+        createdById: user_id,
+        updatedById: user_id,
         ...dto,
       },
     });
@@ -37,7 +43,7 @@ export class ListsService {
     return list;
   }
 
-  async update(id: number, dto: UpdateListDto): Promise<List> {
+  async update(user_id: number, id: number, dto: UpdateListDto): Promise<List> {
     const existingList = await this.prisma.list.findUnique({
       where: { id },
     });
@@ -48,7 +54,10 @@ export class ListsService {
 
     return this.prisma.list.update({
       where: { id },
-      data: dto,
+      data: {
+        updatedById: user_id,
+        ...dto,
+      },
     });
   }
 

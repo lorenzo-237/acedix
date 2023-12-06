@@ -9,6 +9,7 @@ export class VersionsService {
   constructor(private prisma: PrismaService) {}
 
   async create(
+    user_id: number,
     project_id: number,
     createVersionDto: CreateVersionDto,
   ): Promise<Version> {
@@ -18,6 +19,8 @@ export class VersionsService {
       },
       data: {
         project_id,
+        createdById: user_id,
+        updatedById: user_id,
         ...createVersionDto,
       },
     });
@@ -53,6 +56,7 @@ export class VersionsService {
   }
 
   async update(
+    user_id: number,
     id: number,
     updateVersionDto: UpdateVersionDto,
   ): Promise<Version> {
@@ -69,7 +73,7 @@ export class VersionsService {
         project: true,
       },
       where: { id },
-      data: updateVersionDto,
+      data: { updatedById: user_id, ...updateVersionDto },
     });
 
     return updatedVersion;

@@ -9,12 +9,15 @@ export class BoardsService {
   constructor(private prisma: PrismaService) {}
 
   async create(
+    user_id: number,
     version_id: number,
     createBoardDto: CreateBoardDto,
   ): Promise<Board> {
     return this.prisma.board.create({
       data: {
         version_id,
+        createdById: user_id,
+        updatedById: user_id,
         ...createBoardDto,
       },
     });
@@ -40,7 +43,11 @@ export class BoardsService {
     return board;
   }
 
-  async update(id: number, updateBoardDto: UpdateBoardDto): Promise<Board> {
+  async update(
+    user_id: number,
+    id: number,
+    updateBoardDto: UpdateBoardDto,
+  ): Promise<Board> {
     const existingBoard = await this.prisma.board.findUnique({
       where: { id },
     });
@@ -51,7 +58,7 @@ export class BoardsService {
 
     return this.prisma.board.update({
       where: { id },
-      data: updateBoardDto,
+      data: { updatedById: user_id, ...updateBoardDto },
     });
   }
 
