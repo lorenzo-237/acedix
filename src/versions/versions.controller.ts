@@ -28,7 +28,8 @@ export class VersionsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVersionDto: UpdateVersionDto) {
-    return this.versionsService.update(+id, updateVersionDto);
+    const user_id = 1;
+    return this.versionsService.update(user_id, +id, updateVersionDto);
   }
 
   @Delete(':id')
@@ -46,6 +47,7 @@ export class VersionsController {
     @Param('version_id') version_id: string,
     @Body() dto: CreateBoardDto,
   ) {
-    return this.boardsService.create(+version_id, dto);
+    const user_id = 1;
+    return this.boardsService.create(user_id, +version_id, dto);
   }
 }

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -13,7 +14,9 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { VersionsService } from 'src/versions/versions.service';
 import { CreateVersionDto } from 'src/versions/dto/create-version.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('projects')
 @Controller('projects')
 export class ProjectsController {
@@ -24,7 +27,8 @@ export class ProjectsController {
 
   @Post()
   create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+    const user_id = 1;
+    return this.projectsService.create(user_id, createProjectDto);
   }
 
   @Get()
@@ -39,7 +43,8 @@ export class ProjectsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
+    const user_id = 1;
+    return this.projectsService.update(user_id, +id, updateProjectDto);
   }
 
   @Delete(':id')
@@ -56,6 +61,7 @@ export class ProjectsController {
     @Param('project_id') projectId: string,
     @Body() createVersionDto: CreateVersionDto,
   ) {
-    return this.versionsService.create(+projectId, createVersionDto);
+    const user_id = 1;
+    return this.versionsService.create(user_id, +projectId, createVersionDto);
   }
 }

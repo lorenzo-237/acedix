@@ -28,7 +28,8 @@ export class BoardsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.update(+id, updateBoardDto);
+    const user_id = 1;
+    return this.boardsService.update(user_id, +id, updateBoardDto);
   }
 
   @Delete(':id')
@@ -46,6 +47,7 @@ export class BoardsController {
     @Param('board_id') board_id: string,
     @Body() dto: CreateListDto,
   ) {
-    return this.listsService.create(+board_id, dto);
+    const user_id = 1;
+    return this.listsService.create(user_id, +board_id, dto);
   }
 }
