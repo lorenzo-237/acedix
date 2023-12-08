@@ -9,7 +9,6 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -18,6 +17,8 @@ import { CreateVersionDto } from 'src/versions/dto/create-version.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserSession } from 'src/auth/session/user-session.entity';
+import { ForbiddenException } from 'src/acedix/exceptions';
+import { Request } from 'src/acedix/types';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('projects')
@@ -29,15 +30,10 @@ export class ProjectsController {
   ) {}
 
   @Post()
-  create(
-    @Req() req: Request & { user: UserSession },
-    @Body() createProjectDto: CreateProjectDto,
-  ) {
+  create(@Req() req: Request, @Body() createProjectDto: CreateProjectDto) {
     const user_id = req.user ? req.user.id : null;
 
-    if (!user_id) {
-      throw new Error('Error user id is null' + user_id);
-    }
+    if (!user_id) throw new ForbiddenException('User is null');
 
     return this.projectsService.create(user_id, createProjectDto);
   }
@@ -53,8 +49,15 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    const user_id = 1;
+  update(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const user_id = req.user ? req.user.id : null;
+
+    if (!user_id) throw new ForbiddenException('User is null');
+
     return this.projectsService.update(user_id, +id, updateProjectDto);
   }
 
@@ -76,9 +79,7 @@ export class ProjectsController {
   ) {
     const user_id = req.user ? req.user.id : null;
 
-    if (!user_id) {
-      throw new Error('Error user id is null' + user_id);
-    }
+    if (!user_id) throw new ForbiddenException('User is null');
 
     return this.versionsService.create(user_id, +projectId, createVersionDto);
   }
