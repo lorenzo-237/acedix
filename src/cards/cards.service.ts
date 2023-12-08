@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
-import { Card } from './entities/card.entity'; // Assurez-vous d'importer le modèle Card
+import { Card } from './entities/card.entity';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
@@ -23,8 +23,12 @@ export class CardsService {
     });
   }
 
-  async findAll(): Promise<Card[]> {
-    return this.prisma.card.findMany();
+  async findAll(list_id: number): Promise<Card[]> {
+    return this.prisma.card.findMany({
+      where: {
+        list_id,
+      },
+    });
   }
 
   async findOne(id: number): Promise<Card> {
@@ -54,7 +58,10 @@ export class CardsService {
 
     return this.prisma.card.update({
       where: { id },
-      data: updateCardDto,
+      data: {
+        updatedById: user_id,
+        ...updateCardDto,
+      },
     });
   }
 
