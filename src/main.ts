@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { validNodeEnv } from './functions';
@@ -6,6 +6,7 @@ import swagger from './swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 
 const SESSION_NAME = 'acedix-session-id';
 const SESSION_SALT = 'super-salt';
@@ -41,6 +42,9 @@ async function bootstrap() {
 
   app.use(passport.initialize());
   app.use(passport.session());
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   await app.listen(parseInt(env.get<string>('APP_PORT')));
 }
