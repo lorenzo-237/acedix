@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { PrismaService } from 'nestjs-prisma';
+import { NotFoundException } from 'src/acedix/exceptions';
 
 @Injectable()
 export class ProjectsService {
