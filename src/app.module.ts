@@ -7,6 +7,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { VersionsModule } from './versions/versions.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CardsModule } from './cards/cards.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     VersionsModule,
     UsersModule,
     AuthModule,
+    CardsModule,
   ],
   controllers: [],
   providers: [],
