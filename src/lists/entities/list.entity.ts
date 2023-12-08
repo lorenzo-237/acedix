@@ -5,4 +5,8 @@ export class List {
   title: string;
   board_id: number;
   board?: Board;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
 }

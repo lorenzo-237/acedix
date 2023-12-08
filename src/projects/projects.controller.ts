@@ -16,7 +16,6 @@ import { VersionsService } from 'src/versions/versions.service';
 import { CreateVersionDto } from 'src/versions/dto/create-version.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { UserSession } from 'src/auth/session/user-session.entity';
 import { ForbiddenException } from 'src/acedix/exceptions';
 import { Request } from 'src/acedix/types';
 
@@ -73,7 +72,7 @@ export class ProjectsController {
 
   @Post(':project_id/versions')
   createVersion(
-    @Req() req: Request & { user: UserSession },
+    @Req() req: Request,
     @Param('project_id') projectId: string,
     @Body() createVersionDto: CreateVersionDto,
   ) {

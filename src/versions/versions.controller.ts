@@ -6,13 +6,19 @@ import {
   Param,
   Delete,
   Post,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { VersionsService } from './versions.service';
 import { UpdateVersionDto } from './dto/update-version.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { BoardsService } from 'src/boards/boards.service';
 import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Request } from 'src/acedix/types';
+import { ForbiddenException } from 'src/acedix/exceptions';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('versions')
 @Controller('versions')
 export class VersionsController {
@@ -27,8 +33,15 @@ export class VersionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVersionDto: UpdateVersionDto) {
-    const user_id = 1;
+  update(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateVersionDto: UpdateVersionDto,
+  ) {
+    const user_id = req.user ? req.user.id : null;
+
+    if (!user_id) throw new ForbiddenException('User is null');
+
     return this.versionsService.update(user_id, +id, updateVersionDto);
   }
 
@@ -44,10 +57,14 @@ export class VersionsController {
 
   @Post(':version_id/boards')
   createNewBoard(
+    @Req() req: Request,
     @Param('version_id') version_id: string,
     @Body() dto: CreateBoardDto,
   ) {
-    const user_id = 1;
+    const user_id = req.user ? req.user.id : null;
+
+    if (!user_id) throw new ForbiddenException('User is null');
+
     return this.boardsService.create(user_id, +version_id, dto);
   }
 }

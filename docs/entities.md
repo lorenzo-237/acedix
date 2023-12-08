@@ -1,34 +1,56 @@
 ```typescript
-class Board {
-  id: string;
-  name: string;
-}
-
-class List {
-  id: string;
-  title: string;
-  board_id: string;
-  board?: Board;
-}
-
-class Card {
-  id: string;
-  title: string;
-  description: string;
-  list_id: string;
-  position: number;
-}
-
 class Project {
-  id: string;
+  id: number;
   name: string;
   description: string;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
 }
 
 class Version {
-  id: string;
+  id: number;
   number: string;
   description: string;
-  project_id: string;
+  project_id: number;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
 }
+
+class Board {
+  id: number;
+  name: string;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
+}
+
+class List {
+  id: number;
+  title: string;
+  board_id: number;
+  board?: Board;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
+}
+
+class Card {
+  id: number;
+  title: string;
+  description: string;
+  list_id: number;
+  position: number;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
+}
+
+
 ```

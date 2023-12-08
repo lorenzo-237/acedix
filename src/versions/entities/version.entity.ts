@@ -5,5 +5,9 @@ export class Version {
   number: string;
   description: string;
   project_id: number;
-  project: Project;
+  project?: Project;
+  createdById: number;
+  createdAt: Date;
+  updatedById: number;
+  updatedAt: Date;
 }

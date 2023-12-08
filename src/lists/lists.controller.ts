@@ -1,8 +1,21 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { UpdateListDto } from './dto/update-list.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Request } from 'src/acedix/types';
+import { ForbiddenException } from 'src/acedix/exceptions';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('lists')
 @Controller('lists')
 export class ListsController {
