@@ -7,6 +7,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { UpdateCardDto } from './dto/update-card.dto';
@@ -41,5 +43,13 @@ export class CardsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.cardsService.remove(+id);
+  }
+
+  @Put(':id/position')
+  updateCardPosition(
+    @Param('id', ParseIntPipe) cardId: number,
+    @Body('position', ParseIntPipe) newPosition: number,
+  ) {
+    return this.cardsService.updateCardPosition(cardId, newPosition);
   }
 }

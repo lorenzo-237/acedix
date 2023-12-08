@@ -80,4 +80,21 @@ export class CardsService {
 
     return existingCard;
   }
+
+  async updateCardPosition(cardId: number, newPosition: number) {
+    const card = await this.prisma.card.findUnique({
+      where: { id: cardId },
+    });
+
+    if (!card) {
+      throw new NotFoundException(`Card with id ${cardId} not found`);
+    }
+
+    const updatedCard = await this.prisma.card.update({
+      where: { id: cardId },
+      data: { position: newPosition },
+    });
+
+    return updatedCard;
+  }
 }

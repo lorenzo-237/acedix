@@ -37,6 +37,7 @@
 - **GET /cards/:id:** Récupérer une carte spécifique.
 - **PUT /cards/:id:** Mettre à jour les détails d'une carte existante.
 - **DELETE /cards/:id:** Supprimer une carte.
+- **PUT /cards/:id/posiiton** Modifier la position d'une carte
 
 # User :
 
