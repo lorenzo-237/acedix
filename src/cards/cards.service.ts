@@ -13,11 +13,24 @@ export class CardsService {
     list_id: number,
     createCardDto: CreateCardDto,
   ): Promise<Card> {
+    const lastCard = await this.prisma.card.findFirst({
+      select: {
+        id: true,
+        position: true,
+      },
+      orderBy: {
+        position: 'desc',
+      },
+    });
+
+    const position = lastCard ? lastCard.position + 1 : 0;
+
     return this.prisma.card.create({
       data: {
         createdById: user_id,
         updatedById: user_id,
         list_id: list_id,
+        position,
         ...createCardDto,
       },
     });
