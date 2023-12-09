@@ -27,7 +27,7 @@ model Project {
 
 model Version {
   id          Int      @id @default(autoincrement())
-  number      String
+  name        String
   description String
   project_id  Int
   project     Project  @relation(fields: [project_id], references: [id])
@@ -39,7 +39,7 @@ model Version {
   updatedBy   User?    @relation("versionUpdatedBy", fields: [updatedById], references: [id])
   updatedById Int?
 
-  @@unique([project_id, number])
+  @@unique([project_id, name])
   @@map("versions")
 }
 
