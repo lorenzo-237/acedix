@@ -124,4 +124,35 @@ export class ProjectsService {
 
     await Promise.all(promises);
   }
+
+  async removeUserFromProject(
+    projectId: number,
+    userId: number,
+  ): Promise<void> {
+    // Vérifie d'abord si l'utilisateur appartient au projet
+    const existingUserProject = await this.prisma.userProject.findFirst({
+      where: {
+        user_id: userId,
+        project_id: projectId,
+        belongs: true,
+      },
+    });
+
+    if (!existingUserProject) {
+      throw new Error('Cet utilisateur ne fait pas partie de ce projet.');
+    }
+
+    // Met à jour l'enregistrement pour retirer l'utilisateur du projet
+    await this.prisma.userProject.update({
+      where: {
+        user_id_project_id: {
+          user_id: userId,
+          project_id: projectId,
+        },
+      },
+      data: {
+        belongs: false,
+      },
+    });
+  }
 }
