@@ -9,12 +9,12 @@ import {
   Req,
   Put,
   ParseIntPipe,
+  ForbiddenException,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
-import { ForbiddenException } from 'src/acedix/exceptions';
 import { ApiTags } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)

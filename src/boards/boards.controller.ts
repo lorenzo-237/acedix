@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { UpdateBoardDto } from './dto/update-board.dto';
@@ -16,7 +17,6 @@ import { ListsService } from 'src/lists/lists.service';
 import { CreateListDto } from 'src/lists/dto/create-list.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
-import { ForbiddenException } from 'src/acedix/exceptions';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('boards')

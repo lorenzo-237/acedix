@@ -8,13 +8,13 @@ import {
   UseGuards,
   Req,
   Post,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { UpdateListDto } from './dto/update-list.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
-import { ForbiddenException } from 'src/acedix/exceptions';
 import { CardsService } from 'src/cards/cards.service';
 import { CreateCardDto } from 'src/cards/dto/create-card.dto';
 

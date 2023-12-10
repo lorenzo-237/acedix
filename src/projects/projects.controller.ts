@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   ParseIntPipe,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -17,10 +18,10 @@ import { VersionsService } from 'src/versions/versions.service';
 import { CreateVersionDto } from 'src/versions/dto/create-version.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ForbiddenException } from 'src/acedix/exceptions';
 import { Request } from 'src/acedix/types';
 import { AddUserProjectDto } from './dto/add-user-project.dto';
 import { ProjectOwnerGuard } from './guards/project-owner.guard';
+import { ProjectBelongsToGuard } from './guards/project-belong.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('projects')
@@ -68,6 +69,7 @@ export class ProjectsController {
     return this.projectsService.remove(+id);
   }
 
+  @UseGuards(ProjectBelongsToGuard)
   @Get(':project_id/versions')
   listVersions(@Param('project_id') project_Id: string) {
     return this.versionsService.findAll(+project_Id);
