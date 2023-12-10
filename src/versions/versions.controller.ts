@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   ForbiddenException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { VersionsService } from './versions.service';
 import { UpdateVersionDto } from './dto/update-version.dto';
@@ -17,6 +18,7 @@ import { BoardsService } from 'src/boards/boards.service';
 import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
+import { VersionOwnerGuard } from './guards/version-owner.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('versions')
@@ -27,8 +29,9 @@ export class VersionsController {
     private readonly boardsService: BoardsService,
   ) {}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @UseGuards(VersionOwnerGuard)
+  @Get(':version_id')
+  findOne(@Param('version_id', ParseIntPipe) id: number) {
     return this.versionsService.findOne(+id);
   }
 
