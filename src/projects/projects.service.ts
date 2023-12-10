@@ -97,7 +97,7 @@ export class ProjectsService {
       },
     });
 
-    return item !== undefined;
+    return item !== undefined && item !== null;
   }
 
   async addUsersToProject(projectId: number, userIds: number[]): Promise<void> {

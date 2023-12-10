@@ -20,6 +20,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ForbiddenException } from 'src/acedix/exceptions';
 import { Request } from 'src/acedix/types';
 import { AddUserProjectDto } from './dto/add-user-project.dto';
+import { ProjectOwnerGuard } from './guards/project-owner.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('projects')
@@ -85,45 +86,23 @@ export class ProjectsController {
     return this.versionsService.create(user_id, +project_Id, createVersionDto);
   }
 
+  @UseGuards(ProjectOwnerGuard)
   @Post(':project_id/users')
   async addUserToProject(
-    @Req() req: Request,
     @Param('project_id', ParseIntPipe) project_id: number,
     @Body() dto: AddUserProjectDto,
   ) {
-    const user_id = req.user ? req.user.id : null;
-
-    if (!user_id) throw new ForbiddenException('User is null');
-
-    const isOwner = await this.projectsService.userIsProjectOwner(
-      project_id,
-      user_id,
-    );
-
-    if (!isOwner) throw new ForbiddenException("You're not the owner");
-
     this.projectsService.addUsersToProject(project_id, dto.userIds);
 
     return { message: 'Users saved' };
   }
 
+  @UseGuards(ProjectOwnerGuard)
   @Delete(':project_id/users/:user_id')
   async removeUserFromProject(
-    @Req() req: Request,
     @Param('project_id', ParseIntPipe) project_id: number,
     @Param('user_id', ParseIntPipe) user_id: number,
   ) {
-    const auth_id = req.user ? req.user.id : null;
-
-    if (!auth_id) throw new ForbiddenException('User is null');
-
-    const isOwner = await this.projectsService.userIsProjectOwner(
-      project_id,
-      auth_id,
-    );
-
-    if (!isOwner) throw new ForbiddenException("You're not the owner");
-
     this.projectsService.removeUserFromProject(project_id, user_id);
 
     return { message: 'User removed' };
