@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -18,6 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ForbiddenException } from 'src/acedix/exceptions';
 import { Request } from 'src/acedix/types';
+import { AddUserProjectDto } from './dto/add-user-project.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('projects')
@@ -66,20 +68,42 @@ export class ProjectsController {
   }
 
   @Get(':project_id/versions')
-  listVersions(@Param('project_id') projectId: string) {
-    return this.versionsService.findAll(+projectId);
+  listVersions(@Param('project_id') project_Id: string) {
+    return this.versionsService.findAll(+project_Id);
   }
 
   @Post(':project_id/versions')
   createVersion(
     @Req() req: Request,
-    @Param('project_id') projectId: string,
+    @Param('project_id') project_Id: string,
     @Body() createVersionDto: CreateVersionDto,
   ) {
     const user_id = req.user ? req.user.id : null;
 
     if (!user_id) throw new ForbiddenException('User is null');
 
-    return this.versionsService.create(user_id, +projectId, createVersionDto);
+    return this.versionsService.create(user_id, +project_Id, createVersionDto);
+  }
+
+  @Post(':project_id/users')
+  async addUserToProject(
+    @Req() req: Request,
+    @Param('project_id', ParseIntPipe) project_id: number,
+    @Body() dto: AddUserProjectDto,
+  ) {
+    const user_id = req.user ? req.user.id : null;
+
+    if (!user_id) throw new ForbiddenException('User is null');
+
+    const isOwner = await this.projectsService.userIsProjectOwner(
+      project_id,
+      user_id,
+    );
+
+    if (!isOwner) throw new ForbiddenException("You're not the owner");
+
+    this.projectsService.addUsersToProject(project_id, dto.userIds);
+
+    return { message: 'Users saved' };
   }
 }

@@ -72,4 +72,56 @@ export class ProjectsService {
 
     return existingProject;
   }
+
+  async userIsProjectOwner(
+    project_id: number,
+    user_id: number,
+  ): Promise<boolean> {
+    const item = await this.prisma.userProject.findFirst({
+      where: {
+        project_id,
+        user_id,
+        owner: true,
+      },
+    });
+
+    return item !== undefined;
+  }
+
+  async addUsersToProject(projectId: number, userIds: number[]): Promise<void> {
+    // Vérifie d'abord si le projet existe
+    const existingProject = await this.prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!existingProject) {
+      throw new Error("Le projet n'existe pas.");
+    }
+
+    const promises = userIds.map(async (userId) => {
+      await this.prisma.userProject.upsert({
+        where: {
+          user_id_project_id: {
+            project_id: projectId,
+            user_id: userId,
+          },
+        },
+        update: {
+          belongs: true,
+          lastDate: new Date(),
+        },
+        create: {
+          user_id: userId,
+          project_id: projectId,
+          belongs: true,
+          owner: false,
+          lastDate: new Date(),
+        },
+      });
+    });
+
+    await Promise.all(promises);
+  }
 }
