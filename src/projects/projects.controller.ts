@@ -106,4 +106,26 @@ export class ProjectsController {
 
     return { message: 'Users saved' };
   }
+
+  @Delete(':project_id/users/:user_id')
+  async removeUserFromProject(
+    @Req() req: Request,
+    @Param('project_id', ParseIntPipe) project_id: number,
+    @Param('user_id', ParseIntPipe) user_id: number,
+  ) {
+    const auth_id = req.user ? req.user.id : null;
+
+    if (!auth_id) throw new ForbiddenException('User is null');
+
+    const isOwner = await this.projectsService.userIsProjectOwner(
+      project_id,
+      auth_id,
+    );
+
+    if (!isOwner) throw new ForbiddenException("You're not the owner");
+
+    this.projectsService.removeUserFromProject(project_id, user_id);
+
+    return { message: 'User removed' };
+  }
 }
