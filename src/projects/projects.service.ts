@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { PrismaService } from 'nestjs-prisma';
-import { NotFoundException } from 'src/acedix/exceptions';
 
 @Injectable()
 export class ProjectsService {
@@ -94,6 +93,21 @@ export class ProjectsService {
         project_id,
         user_id,
         owner: true,
+      },
+    });
+
+    return item !== undefined && item !== null;
+  }
+
+  async userBelongsToProject(
+    project_id: number,
+    user_id: number,
+  ): Promise<boolean> {
+    const item = await this.prisma.userProject.findFirst({
+      where: {
+        project_id,
+        user_id,
+        belongs: true,
       },
     });
 
