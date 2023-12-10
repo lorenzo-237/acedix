@@ -54,5 +54,12 @@ class Card {
   updatedAt: Date;
 }
 
+class User {
+  id: number;
+  username: string;
+  password: string;
+  email: string;
+  role: 'USER' | 'MAINTAINER' | 'ADMIN';
+}
 
 ```
