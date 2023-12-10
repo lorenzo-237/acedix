@@ -33,8 +33,19 @@ export class ProjectsService {
     return project;
   }
 
-  async findAll(): Promise<Project[]> {
-    return this.prisma.project.findMany();
+  async findAll(user_id: number): Promise<Project[]> {
+    const items = await this.prisma.userProject.findMany({
+      where: {
+        user_id,
+        belongs: true,
+      },
+      include: { project: true },
+    });
+
+    return items.map((item) => ({
+      ...item.project,
+      lastDate: item.lastDate,
+    }));
   }
 
   async findOne(id: number): Promise<Project> {
@@ -127,6 +138,14 @@ export class ProjectsService {
     }
 
     const promises = userIds.map(async (userId) => {
+      const existingUser = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!existingUser) return;
+
       await this.prisma.userProject.upsert({
         where: {
           user_id_project_id: {
@@ -165,7 +184,8 @@ export class ProjectsService {
     });
 
     if (!existingUserProject) {
-      throw new Error('Cet utilisateur ne fait pas partie de ce projet.');
+      // throw new Error('Cet utilisateur ne fait pas partie de ce projet.');
+      return;
     }
 
     // Met à jour l'enregistrement pour retirer l'utilisateur du projet

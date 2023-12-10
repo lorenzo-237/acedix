@@ -9,4 +9,5 @@ export class Project {
   createdAt: Date;
   updatedById: number;
   updatedAt: Date;
+  lastDate?: Date;
 }

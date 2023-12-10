@@ -9,7 +9,6 @@ import {
   UseGuards,
   Req,
   ParseIntPipe,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -38,8 +37,8 @@ export class ProjectsController {
   }
 
   @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@Req() req: Request) {
+    return this.projectsService.findAll(req.user.id);
   }
 
   @UseGuards(ProjectBelongsToGuard)
@@ -70,17 +69,18 @@ export class ProjectsController {
     return this.versionsService.findAll(+project_Id);
   }
 
+  @UseGuards(ProjectOwnerGuard)
   @Post(':project_id/versions')
   createVersion(
     @Req() req: Request,
-    @Param('project_id') project_Id: string,
+    @Param('project_id', ParseIntPipe) project_Id: number,
     @Body() createVersionDto: CreateVersionDto,
   ) {
-    const user_id = req.user ? req.user.id : null;
-
-    if (!user_id) throw new ForbiddenException('User is null');
-
-    return this.versionsService.create(user_id, +project_Id, createVersionDto);
+    return this.versionsService.create(
+      req.user.id,
+      project_Id,
+      createVersionDto,
+    );
   }
 
   @UseGuards(ProjectOwnerGuard)
