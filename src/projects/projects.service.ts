@@ -13,13 +13,25 @@ export class ProjectsService {
     user_id: number,
     createProjectDto: CreateProjectDto,
   ): Promise<Project> {
-    return this.prisma.project.create({
+    const project = await this.prisma.project.create({
       data: {
         createdById: user_id,
         updatedById: user_id,
         ...createProjectDto,
       },
     });
+
+    await this.prisma.userProject.create({
+      data: {
+        belongs: true,
+        lastDate: new Date(),
+        owner: true,
+        project_id: project.id,
+        user_id,
+      },
+    });
+
+    return project;
   }
 
   async findAll(): Promise<Project[]> {
