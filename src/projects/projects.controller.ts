@@ -34,11 +34,7 @@ export class ProjectsController {
 
   @Post()
   create(@Req() req: Request, @Body() createProjectDto: CreateProjectDto) {
-    const user_id = req.user ? req.user.id : null;
-
-    if (!user_id) throw new ForbiddenException('User is null');
-
-    return this.projectsService.create(user_id, createProjectDto);
+    return this.projectsService.create(req.user.id, createProjectDto);
   }
 
   @Get()
@@ -46,26 +42,25 @@ export class ProjectsController {
     return this.projectsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @UseGuards(ProjectBelongsToGuard)
+  @Get(':project_id')
+  findOne(@Param('project_id') id: string) {
     return this.projectsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @UseGuards(ProjectOwnerGuard)
+  @Patch(':project_id')
   update(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param('project_id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ) {
-    const user_id = req.user ? req.user.id : null;
-
-    if (!user_id) throw new ForbiddenException('User is null');
-
-    return this.projectsService.update(user_id, +id, updateProjectDto);
+    return this.projectsService.update(req.user.id, +id, updateProjectDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UseGuards(ProjectOwnerGuard)
+  @Delete(':project_id')
+  remove(@Param('project_id') id: string) {
     return this.projectsService.remove(+id);
   }
 
