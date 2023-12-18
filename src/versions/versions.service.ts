@@ -120,4 +120,26 @@ export class VersionsService {
 
     return !!userBelongsToProject;
   }
+  async userIsProjectOwner(
+    versionId: number,
+    userId: number,
+  ): Promise<boolean> {
+    const version = await this.prisma.version.findUnique({
+      where: { id: versionId },
+      include: { project: true },
+    });
+
+    if (!version || !version.project) {
+      return false;
+    }
+
+    const projectId = version.project.id;
+
+    // Check if the user belongs to the project
+    const userBelongsToProject = await this.prisma.userProject.findFirst({
+      where: { user_id: userId, project_id: projectId, owner: true },
+    });
+
+    return !!userBelongsToProject;
+  }
 }
