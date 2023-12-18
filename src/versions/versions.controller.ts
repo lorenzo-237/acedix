@@ -19,6 +19,7 @@ import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
 import { VersionBelongGuard } from './guards/version-belong.guard';
+import { VersionOwnerGuard } from './guards/version-owner.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('versions')
@@ -35,7 +36,7 @@ export class VersionsController {
     return this.versionsService.findOne(+id);
   }
 
-  @UseGuards(VersionBelongGuard)
+  @UseGuards(VersionOwnerGuard)
   @Patch(':version_id')
   update(
     @Req() req: Request,
@@ -49,7 +50,7 @@ export class VersionsController {
     return this.versionsService.update(user_id, +id, updateVersionDto);
   }
 
-  @UseGuards(VersionBelongGuard)
+  @UseGuards(VersionOwnerGuard)
   @Delete(':version_id')
   remove(@Param('version_id', ParseIntPipe) id: number) {
     return this.versionsService.remove(+id);
@@ -61,7 +62,7 @@ export class VersionsController {
     return this.boardsService.findAll(+version_id);
   }
 
-  @UseGuards(VersionBelongGuard)
+  @UseGuards(VersionOwnerGuard)
   @Post(':version_id/boards')
   createNewBoard(
     @Req() req: Request,

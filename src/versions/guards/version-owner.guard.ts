@@ -21,14 +21,14 @@ export class VersionOwnerGuard implements CanActivate {
       throw new ForbiddenException('User is null');
     }
 
-    const belongsToProject = await this.versionsService.userIsProjectOwner(
+    const isProjectOwner = await this.versionsService.userIsProjectOwner(
       version_id,
       user_id,
     );
 
-    if (!belongsToProject) {
+    if (!isProjectOwner) {
       throw new ForbiddenException(
-        "User doesn't belong to the project of this version",
+        "User isn't the project owner of this version",
       );
     }
 
