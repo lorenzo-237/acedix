@@ -18,7 +18,7 @@ import { BoardsService } from 'src/boards/boards.service';
 import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Request } from 'src/acedix/types';
-import { VersionOwnerGuard } from './guards/version-owner.guard';
+import { VersionBelongGuard } from './guards/version-belong.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('versions')
@@ -29,16 +29,17 @@ export class VersionsController {
     private readonly boardsService: BoardsService,
   ) {}
 
-  @UseGuards(VersionOwnerGuard)
+  @UseGuards(VersionBelongGuard)
   @Get(':version_id')
   findOne(@Param('version_id', ParseIntPipe) id: number) {
     return this.versionsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @UseGuards(VersionBelongGuard)
+  @Patch(':version_id')
   update(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param('version_id', ParseIntPipe) id: number,
     @Body() updateVersionDto: UpdateVersionDto,
   ) {
     const user_id = req.user ? req.user.id : null;
@@ -48,20 +49,23 @@ export class VersionsController {
     return this.versionsService.update(user_id, +id, updateVersionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UseGuards(VersionBelongGuard)
+  @Delete(':version_id')
+  remove(@Param('version_id', ParseIntPipe) id: number) {
     return this.versionsService.remove(+id);
   }
 
+  @UseGuards(VersionBelongGuard)
   @Get(':version_id/boards')
-  findAllBoards(@Param('version_id') version_id: string) {
+  findAllBoards(@Param('version_id', ParseIntPipe) version_id: number) {
     return this.boardsService.findAll(+version_id);
   }
 
+  @UseGuards(VersionBelongGuard)
   @Post(':version_id/boards')
   createNewBoard(
     @Req() req: Request,
-    @Param('version_id') version_id: string,
+    @Param('version_id', ParseIntPipe) version_id: number,
     @Body() dto: CreateBoardDto,
   ) {
     const user_id = req.user ? req.user.id : null;

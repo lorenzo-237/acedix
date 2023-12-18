@@ -9,7 +9,7 @@ import { VersionsService } from '../versions.service';
 import { Request } from 'src/acedix/types';
 
 @Injectable()
-export class VersionOwnerGuard implements CanActivate {
+export class VersionBelongGuard implements CanActivate {
   constructor(private readonly versionsService: VersionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
