@@ -130,6 +130,7 @@ model UserProject {
   project    Project  @relation(fields: [project_id], references: [id])
   owner      Boolean
   lastDate   DateTime
+  favorite   Boolean  @default(false)
 
   @@unique([user_id, project_id])
   @@map("users_projects")
