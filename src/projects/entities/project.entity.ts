@@ -10,4 +10,5 @@ export class Project {
   updatedById: number;
   updatedAt: Date;
   lastDate?: Date;
+  isFavorite?: boolean;
 }

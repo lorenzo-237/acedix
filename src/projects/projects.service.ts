@@ -45,6 +45,7 @@ export class ProjectsService {
     return items.map((item) => ({
       ...item.project,
       lastDate: item.lastDate,
+      isFavorite: item.favorite,
     }));
   }
 
