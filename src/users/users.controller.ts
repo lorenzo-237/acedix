@@ -20,6 +20,9 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  // TODO : findall user : with one query param => project_id
+  // if project_id is an existing project
+  // then list users except user's project
   @Get()
   findAll() {
     return this.usersService.findAll();
