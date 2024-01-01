@@ -13,12 +13,12 @@ import { CardsModule } from './cards/cards.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule.forRoot({ isGlobal: true }),
+    AuthModule,
     BoardsModule,
     ListsModule,
     ProjectsModule,
     VersionsModule,
     UsersModule,
-    AuthModule,
     CardsModule,
   ],
   controllers: [],

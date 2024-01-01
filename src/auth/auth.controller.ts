@@ -5,13 +5,17 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { SessionAuthGuard } from './guards/session-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LocalStatelessAuthGuard } from './guards/local-stateless.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiBody({
+    type: LoginDto,
+  })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   loginLocal(@Req() req: Request) {
