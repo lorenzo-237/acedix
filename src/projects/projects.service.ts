@@ -3,6 +3,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { PrismaService } from 'nestjs-prisma';
+import { sortUsersByUsername } from './utils';
 
 @Injectable()
 export class ProjectsService {
@@ -39,14 +40,45 @@ export class ProjectsService {
         user_id,
         belongs: true,
       },
-      include: { project: true },
+      include: {
+        project: {
+          include: {
+            UserProject: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        project: {
+          name: 'asc',
+        },
+      },
     });
 
-    return items.map((item) => ({
-      ...item.project,
-      lastDate: item.lastDate,
-      isFavorite: item.favorite,
-    }));
+    const projects: Project[] = items.map((item) => {
+      const usersProject = item.project.UserProject.map((up) => ({
+        id: up.user_id,
+        username: up.user.username,
+      }));
+      const temp = {
+        ...item.project,
+        lastDate: item.lastDate,
+        isFavorite: item.favorite,
+        users: sortUsersByUsername(usersProject),
+      };
+      delete temp.UserProject;
+      return temp;
+    });
+
+    return projects;
   }
 
   async findOne(id: number): Promise<Project> {

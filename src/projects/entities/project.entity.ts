@@ -11,4 +11,10 @@ export class Project {
   updatedAt: Date;
   lastDate?: Date;
   isFavorite?: boolean;
+  users?: UserBelongingToProject[];
+}
+
+export class UserBelongingToProject {
+  id: number;
+  username: string;
 }
