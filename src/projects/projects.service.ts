@@ -34,6 +34,7 @@ export class ProjectsService {
     return project;
   }
 
+  // TODO : factorize include & co to reuse it into find one
   async findAll(user_id: number): Promise<Project[]> {
     const items = await this.prisma.userProject.findMany({
       where: {
