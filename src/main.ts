@@ -5,6 +5,7 @@ import { validNodeEnv } from './functions';
 import swagger from './swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
+import redix from './acedix/redix';
 import * as passport from 'passport';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 
@@ -25,20 +26,26 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   swagger.initialize(app);
 
-  app.use(
-    session({
-      name: SESSION_NAME,
-      secret: SESSION_SALT,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: SESSION_MAX_AGE,
-        httpOnly: true,
-        secure: nodeEnv === 'production',
-        signed: true,
-      },
-    }),
-  );
+  try {
+    await redix.initialize();
+    app.use(
+      session({
+        name: SESSION_NAME,
+        store: redix.getStore(),
+        secret: SESSION_SALT,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          maxAge: SESSION_MAX_AGE,
+          httpOnly: true,
+          secure: nodeEnv === 'production',
+          signed: true,
+        },
+      }),
+    );
+  } catch (error) {
+    console.error('\x1b[31m%s\x1b[0m', error);
+  }
 
   app.use(passport.initialize());
   app.use(passport.session());
