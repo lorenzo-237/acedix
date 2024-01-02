@@ -17,4 +17,5 @@ export class Project {
 export class UserBelongingToProject {
   id: number;
   username: string;
+  email: string;
 }

@@ -49,6 +49,7 @@ export class ProjectsService {
                   select: {
                     id: true,
                     username: true,
+                    email: true,
                   },
                 },
               },
@@ -67,6 +68,7 @@ export class ProjectsService {
       const usersProject = item.project.UserProject.map((up) => ({
         id: up.user_id,
         username: up.user.username,
+        email: up.user.email,
       }));
       const temp = {
         ...item.project,
