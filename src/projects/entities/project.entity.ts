@@ -1,5 +1,8 @@
 import { Version } from 'src/versions/entities/version.entity';
 
+// TODO : add user.firstname / lastname
+// TODO : add into user_project a column 'role'
+// TODO : check the service to add these data to the payload
 export class Project {
   id: number;
   name: string;
