@@ -3,7 +3,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { PrismaService } from 'nestjs-prisma';
-import { sortUsersByUsername } from './utils';
+import { getUserAuthenticated, getUsersBelongingToProject } from './utils';
 
 @Injectable()
 export class ProjectsService {
@@ -65,18 +65,16 @@ export class ProjectsService {
     });
 
     const projects: Project[] = items.map((item) => {
-      const usersProject = item.project.UserProject.map((up) => ({
-        id: up.user_id,
-        username: up.user.username,
-        email: up.user.email,
-      }));
-      const temp = {
+      const UserProject = item.project.UserProject;
+
+      const temp: Project = {
         ...item.project,
+        userAuthenticated: getUserAuthenticated(UserProject, user_id),
         lastDate: item.lastDate,
         isFavorite: item.favorite,
-        users: sortUsersByUsername(usersProject),
+        users: getUsersBelongingToProject(UserProject, true),
       };
-      delete temp.UserProject;
+      delete temp.UserProject; // remove it, i do not need it from prisma
       return temp;
     });
 

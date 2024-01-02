@@ -12,13 +12,16 @@ export class Project {
   createdAt: Date;
   updatedById: number;
   updatedAt: Date;
+  userAuthenticated?: UserBelongingToProject;
   lastDate?: Date;
   isFavorite?: boolean;
   users?: UserBelongingToProject[];
+  UserProject?: any[]; // only for typescript.
 }
 
 export class UserBelongingToProject {
   id: number;
   username: string;
   email: string;
+  owner: boolean;
 }
