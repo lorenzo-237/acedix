@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "acedix",
+  "type": "collection",
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "http://localhost:5004/api"
+  }
+}
