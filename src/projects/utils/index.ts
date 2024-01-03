@@ -1,4 +1,5 @@
-import { UserBelongingToProject } from '../entities/project.entity';
+import { Project, UserBelongingToProject } from '../entities/project.entity';
+import { PrismaProject, PrismaUserProject } from '../models';
 
 export function sortUsersByUsername(
   users: UserBelongingToProject[],
@@ -6,23 +7,8 @@ export function sortUsersByUsername(
   return users.slice().sort((a, b) => a.username.localeCompare(b.username));
 }
 
-type PrimsaUserProject = ({
-  user: {
-    id: number;
-    email: string;
-    username: string;
-  };
-} & {
-  user_id: number;
-  belongs: boolean;
-  project_id: number;
-  owner: boolean;
-  lastDate: Date;
-  favorite: boolean;
-})[];
-
 export function getUserAuthenticated(
-  UserProject: PrimsaUserProject,
+  UserProject: PrismaUserProject[],
   user_id: number,
 ): UserBelongingToProject {
   const find = UserProject.find(({ user }) => user.id === user_id);
@@ -44,7 +30,7 @@ export function getUserAuthenticated(
 }
 
 export function getUsersBelongingToProject(
-  UserProject: PrimsaUserProject,
+  UserProject: PrismaUserProject[],
   sort: boolean,
 ): UserBelongingToProject[] {
   const usersProject: UserBelongingToProject[] = UserProject.map((up) => ({
@@ -54,4 +40,29 @@ export function getUsersBelongingToProject(
     owner: up.owner,
   }));
   return sort ? sortUsersByUsername(usersProject) : usersProject;
+}
+
+type ItemPrisma = PrismaUserProject & {
+  project: PrismaProject & {
+    UserProject: PrismaUserProject[];
+  };
+};
+
+export async function formatPrismaProject(
+  item: ItemPrisma,
+  user_id: number,
+): Promise<Project> {
+  const UserProject = item.project.UserProject;
+
+  delete item.project.UserProject;
+
+  const formattedProject: Project = {
+    ...item.project,
+    userAuthenticated: getUserAuthenticated(UserProject, user_id),
+    lastDate: item.lastDate,
+    isFavorite: item.favorite,
+    users: getUsersBelongingToProject(UserProject, true),
+  };
+
+  return formattedProject;
 }

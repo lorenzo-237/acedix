@@ -43,8 +43,8 @@ export class ProjectsController {
 
   @UseGuards(ProjectBelongsToGuard)
   @Get(':project_id')
-  findOne(@Param('project_id') id: string) {
-    return this.projectsService.findOne(+id);
+  findOne(@Req() req: Request, @Param('project_id') id: string) {
+    return this.projectsService.findOne(+id, req.user.id);
   }
 
   @UseGuards(ProjectOwnerGuard)

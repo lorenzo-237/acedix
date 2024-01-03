@@ -3,7 +3,8 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { PrismaService } from 'nestjs-prisma';
-import { getUserAuthenticated, getUsersBelongingToProject } from './utils';
+import { formatPrismaProject } from './utils';
+import { findAllUserProjects, findOneProject } from './shortcuts';
 
 @Injectable()
 export class ProjectsService {
@@ -34,64 +35,25 @@ export class ProjectsService {
     return project;
   }
 
-  // TODO : factorize include & co to reuse it into find one
+  // TODO : relire car Yuni m'embete mdr
   async findAll(user_id: number): Promise<Project[]> {
-    const items = await this.prisma.userProject.findMany({
-      where: {
-        user_id,
-        belongs: true,
-      },
-      include: {
-        project: {
-          include: {
-            UserProject: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    username: true,
-                    email: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        project: {
-          name: 'asc',
-        },
-      },
-    });
+    const items = await findAllUserProjects(this.prisma, user_id);
 
-    const projects: Project[] = items.map((item) => {
-      const UserProject = item.project.UserProject;
-
-      const temp: Project = {
-        ...item.project,
-        userAuthenticated: getUserAuthenticated(UserProject, user_id),
-        lastDate: item.lastDate,
-        isFavorite: item.favorite,
-        users: getUsersBelongingToProject(UserProject, true),
-      };
-      delete temp.UserProject; // remove it, i do not need it from prisma
-      return temp;
-    });
+    const projects = await Promise.all(
+      items.map((item) => formatPrismaProject(item, user_id)),
+    );
 
     return projects;
   }
 
-  async findOne(id: number): Promise<Project> {
-    const project = await this.prisma.project.findUnique({
-      where: { id },
-    });
+  async findOne(project_id: number, user_id: number): Promise<any> {
+    const item = await findOneProject(this.prisma, user_id, project_id);
 
-    if (!project) {
-      throw new NotFoundException(`Project with ID ${id} not found`);
+    if (!item) {
+      throw new NotFoundException(`Project with ID ${project_id} not found`);
     }
 
-    return project;
+    return formatPrismaProject(item, user_id);
   }
 
   async update(
